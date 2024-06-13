@@ -1,0 +1,13 @@
+{
+    "name": "openid-provider",
+    "version": "1.0.0",
+    "description": "OpenID Provider",
+    "main": "provider.js",
+    "scripts": {
+      "start": "node provider.js"
+    },
+    "dependencies": {
+      "express": "^4.17.1"
+    }
+  }
+  
