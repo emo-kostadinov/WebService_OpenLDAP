@@ -1,0 +1,16 @@
+{
+    "id": "backend",
+    "realm": "backend",
+    "notBefore": 0,
+    "clients": [
+      {
+        "clientId": "mobile-app",
+        "secret": "your-client-secret",
+        "enabled": true,
+        "protocol": "openid-connect",
+        "publicClient": false,
+        "directAccessGrantsEnabled": true
+      }
+    ]
+  }
+  

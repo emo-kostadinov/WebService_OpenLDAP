@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql-source
+      - mysql-replica
+      - proxysql
+    environment:
+      - KEYCLOAK_CLIENT_SECRET=your-client-secret
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  mysql-source:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    volumes:
+      - source-data:/var/lib/mysql
+      - ./database/source-my.cnf:/etc/mysql/my.cnf
+    command: --default-authentication-plugin=mysql_native_password
+
+  mysql-replica:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    volumes:
+      - replica-data:/var/lib/mysql
+      - ./database/replica-my.cnf:/etc/mysql/my.cnf
+    command: --default-authentication-plugin=mysql_native_password
+
+  proxysql:
+    build:
+      context: ./database
+      dockerfile: Dockerfile-proxysql
+    ports:
+      - "6032:6032"
+      - "6033:6033"
+    depends_on:
+      - mysql-source
+      - mysql-replica
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.0
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "8081:8080"
+    command: start-dev
+    volumes:
+      - ./keycloak:/opt/keycloak/data
+
+volumes:
+  source-data:
+  replica-data:
